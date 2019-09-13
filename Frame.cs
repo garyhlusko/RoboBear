@@ -1,19 +1,23 @@
 using System;
 
+
 public class Frame
 	{
-		public string Path {get;set;}
-		public bool IndexBool {get;set;}
-		public int Index {get;set;}
-		public string Delimiter {get;set;}
-		public bool HeaderBool {get; set;}
-		public string[] HeadersList {get; set;}
-		public Json Rows;
+		public int Index {get; set;};
+		public string[] Headers{get; set;};
+		public Json Data{get; set;};
 
-		public Frame(string Path,string Delimiter,bool IndexBool, int Index,bool HeaderBool)
+		public Frame(int Index, string[] headers, Json Data)
 		{
+			_Index = Index;
+			_Headers = Headers;
+			_Data = Data;
 		}
 		
+		public static void Print(){
+
+		}
+
 		//filter column
 		public static Frame FilterColumn(string ColumnName,string value)
 		{
@@ -36,13 +40,24 @@ public class Frame
 
 	}
 
+public static Json GetJson(string[] rows, string[] Headers)
+{
+	Dictionary<string,string> values = new Dictionary <string,string>();
+	foreach(string zipped in System.Collections.Generic.IEnumerable<string,string>(rows,Headers);)
+	{
+		values.add(zipped[0],zipped[1]);
+	}
+	Json json = JsonConvert.SerializeObject(values);
+	return json 
+}
+
 class Program{
 	static void Main()
 	{
 		
 	}
 	
-	static Frame read_csv(string path, delimiter=",",Headers=true,index=false)
+	static Frame read_csv(string path, delimiter=",",Headers=0,index=false)
 	{
 		Frame f;
 		using(var reader = new StreamReader(@"{path}"))
@@ -53,14 +68,15 @@ class Program{
 				var line = reader.ReadLine();
 				var values = line.Split(delimiter);
 				
-				if(Headers & i == 0){
+				if(Headers is not None & i == 0){
 					for(string column in values){
-						f.HeadersList.add(column)
+						f.Headers.add(column);
 					}
 					i+= 1
 				}
+
 				if(index){
-					f.Rows[line[index]] = {Column:value}
+					f.Data[line[index]] = GetJson(string[] rows, f.Headers);
 				}			
 			}	
 		}
