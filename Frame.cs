@@ -4,6 +4,7 @@ using System.IO;
 using Newtonsoft;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 class Frame
 	{
@@ -20,10 +21,24 @@ class Frame
 		
 		public void Print()
         {
-            foreach(string header in Headers)
+            var DataJson = (JObject) JsonConvert.DeserializeObject(Data);
+            foreach (string header in Headers)
             {
                 Console.Write(header + "\t");
             }
+            foreach (var data in DataJson)
+            {
+
+                string values = data.Value.ToString();
+                JObject dataJson = (JObject)JsonConvert.DeserializeObject(values);
+                foreach (string header in Headers)
+                {
+                    Console.Write(dataJson[header]+ "\t");
+                   
+                }
+                Console.WriteLine();
+            }
+        Console.ReadLine();
 		}
 
 		//filter column
@@ -55,7 +70,6 @@ class Program{
 	{
         Console.WriteLine("Entering Path");
         Frame df = read_csv("C:\\Users\\garyh\\Desktop\\test_csv.csv");
-        Console.WriteLine(df);
         df.Print();
         Console.ReadLine();
 	}
@@ -90,14 +104,16 @@ class Program{
                     foreach(string column in values)
                     {
                         HeaderData.Add(j.ToString());
+                        
                     }
+                    i += 1;
                 }
 
-				if(Index.HasValue){
+				if(Index.HasValue & i != 0){
 					Data[values[Index.Value]] = GetJson(values, HeaderData);
 				}
 
-                if(Index == null)
+                if(Index == null & i !=0)
                 {
                     Data[LineNumber.ToString()] = GetJson(values, HeaderData);
                     LineNumber += 1;
