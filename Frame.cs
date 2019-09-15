@@ -42,9 +42,26 @@ class Frame
 		}
 
 		//filter column
-		public void FilterColumn( string ColumnName, string Value)
+		public Frame FilterColumn( string ColumnName, string Value)
 		{
             Frame ReturnFrame;
+            List<string> newHeaders = new List<string>();
+            Dictionary<string,string> DictionaryData = new Dictionary<string,string>();
+            var DataJson = (JObject)JsonConvert.DeserializeObject(Data);
+
+            foreach (var data in DataJson)
+            {
+                string values = data.Value.ToString();
+                JObject dataJson = (JObject)JsonConvert.DeserializeObject(values);
+                if (dataJson[ColumnName].Equals(Value))
+                {
+                    DictionaryData[dataJson[Headers[Index]].ToString()] = values;
+
+                }
+            }
+            string DataFilteredJson = JsonConvert.SerializeObject(DictionaryData);
+            ReturnFrame = new Frame(Index, Headers, DataFilteredJson);
+            return ReturnFrame;
 		}
 
 		//compare if it's different return true, if it's false reutrn false
